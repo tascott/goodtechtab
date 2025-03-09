@@ -1,9 +1,11 @@
 from flask import Flask, jsonify
 from scraper import scrape_news
 from filter import filter_positive_articles
+from flask_cors import CORS
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/good-tech-news", methods=["GET"])
 def get_good_tech_news():
