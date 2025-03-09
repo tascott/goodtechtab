@@ -1,0 +1,10 @@
+{
+	"name": "GoodTechTab",
+	"description": "Override the new tab page to show positive tech news",
+	"version": "1.0",
+	"manifest_version": 3,
+	"chrome_url_overrides": {
+		"newtab": "index.html"
+	},
+	"permissions": []
+}
