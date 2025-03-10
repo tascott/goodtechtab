@@ -1,0 +1,10 @@
+/backend/__pycache__/
+/.vscode/
+/.idea/
+/.pytest_cache/
+/.mypy_cache/
+/.coverage
+/.coverage.*
+/.DS_Store
+/*.pyc
+backend/__pycache__/scraper.cpython-310.pyc
