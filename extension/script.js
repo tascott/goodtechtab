@@ -1,19 +1,35 @@
 // In a real deployment, you'd replace this URL with your actual server endpoint.
 // For testing locally, you might run your Python server on http://127.0.0.1:5000
-const API_URL = "http://127.0.0.1:5000/good-tech-news";
+const BASE_URL = "http://127.0.0.1:5000";
+const ENDPOINTS = {
+    news: `${BASE_URL}/good-tech-news`,
+    grok: `${BASE_URL}/ask-grok`,
+    perplexity: `${BASE_URL}/ask-perplexity`,
+    deepseek: `${BASE_URL}/ask-deepseek`
+};
 
 async function fetchNews() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(ENDPOINTS.news, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors'
+        });
+        console.log('News Response Status:', response.status);
+        console.log('News Response Headers:', Object.fromEntries(response.headers));
+        
         if(!response.ok) {
-            throw new Error(`Error fetching news: ${response.statusText}`);
+            throw new Error(`Error fetching news: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
         displayNews(data);
     } catch(error) {
-        console.error("Could not load news:",error);
+        console.error("Could not load news:", error);
         const container = document.getElementById("news-container");
-        container.innerHTML = `<p>Unable to load news at this time.</p>`;
+        container.innerHTML = `<p>Unable to load news at this time. Error: ${error.message}</p>`;
     }
 }
 
@@ -49,5 +65,72 @@ function displayNews(newsArray) {
     });
 }
 
-// When the new tab page loads, fetch and display the news
-document.addEventListener("DOMContentLoaded",fetchNews);
+// Generic function to ask AI models
+async function askAI(question, model) {
+    const responseElement = document.getElementById(`${model}-content`);
+    responseElement.textContent = 'Thinking...';
+    
+    try {
+        console.log(`Sending ${model} request:`, { question });
+        
+        const response = await fetch(ENDPOINTS[model], {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            credentials: 'omit',
+            body: JSON.stringify({ question })
+        });
+
+        console.log(`${model} Response Status:`, response.status);
+        console.log(`${model} Response Headers:`, Object.fromEntries(response.headers));
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`${model} Error Response:`, errorText);
+            throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        console.log(`${model.toUpperCase()} API Full Response:`, data);
+        responseElement.textContent = data.choices[0].message.content;
+    } catch (error) {
+        console.error(`${model} Error:`, error);
+        responseElement.textContent = `Error: ${error.message}`;
+    }
+}
+
+// Set up event handlers for both AI models
+function setupAIHandler(model) {
+    const button = document.getElementById(`${model}-button`);
+    const input = document.getElementById(`${model}-input`);
+
+    button.addEventListener('click', () => {
+        const question = input.value.trim();
+        if (question) {
+            askAI(question, model);
+        }
+    });
+
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const question = input.value.trim();
+            if (question) {
+                askAI(question, model);
+            }
+        }
+    });
+}
+
+// Initialize everything when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchNews();
+    setupAIHandler('grok');
+    setupAIHandler('perplexity');
+    setupAIHandler('deepseek');
+});
