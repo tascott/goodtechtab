@@ -5,7 +5,8 @@ const ENDPOINTS = {
     news: `${BASE_URL}/good-tech-news`,
     grok: `${BASE_URL}/ask-grok`,
     perplexity: `${BASE_URL}/ask-perplexity`,
-    deepseek: `${BASE_URL}/ask-deepseek`
+    deepseek: `${BASE_URL}/ask-deepseek`,
+    openai: `${BASE_URL}/ask-openai`
 };
 
 async function fetchNews() {
@@ -133,4 +134,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAIHandler('grok');
     setupAIHandler('perplexity');
     setupAIHandler('deepseek');
+    setupAIHandler('openai');
 });

@@ -80,6 +80,14 @@
             background: #27ae60;
         }
 
+        .openai-button {
+            background: #10a37f;
+        }
+
+        .openai-button:hover {
+            background: #0d8c6d;
+        }
+
         .ai-response {
             margin-top: 1rem;
             white-space: pre-wrap;
@@ -130,6 +138,17 @@
         <div id="deepseek-response" class="ai-response">
             <div class="ai-header">DeepSeek Response:</div>
             <div id="deepseek-content"></div>
+        </div>
+    </div>
+
+    <div class="ai-container">
+        <div>
+            <input type="text" id="openai-input" class="ai-input" placeholder="Ask OpenAI something...">
+            <button id="openai-button" class="ai-button openai-button">Ask OpenAI</button>
+        </div>
+        <div id="openai-response" class="ai-response">
+            <div class="ai-header">OpenAI Response:</div>
+            <div id="openai-content"></div>
         </div>
     </div>
 

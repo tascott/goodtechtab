@@ -193,6 +193,49 @@ def ask_deepseek():
         print('\nDeepSeek API Error:', str(e))
         return jsonify({"error": str(e)}), 500
 
+@app.route("/ask-openai", methods=["POST", "OPTIONS"])
+def ask_openai():
+    if request.method == "OPTIONS":
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST')
+        return response
+
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return jsonify({"error": "OpenAI package not installed"}), 500
+
+    openai_key = os.getenv('OPENAI_API_KEY')
+    if not openai_key:
+        return jsonify({"error": "OPENAI_API_KEY not found in environment"}), 500
+
+    question = request.json.get('question')
+    if not question:
+        return jsonify({"error": "No question provided"}), 400
+
+    try:
+        client = OpenAI(api_key=openai_key)
+        response = client.responses.create(
+            model="gpt-4o",
+            tools=[{"type": "web_search_preview"}],
+            input=question
+        )
+        result = {
+            "choices": [{
+                "message": {
+                    "content": response.output_text,
+                    "role": "assistant"
+                }
+            }]
+        }
+        print('\nOpenAI API Response:', json.dumps(result, indent=2))
+        return jsonify(result)
+    except Exception as e:
+        print('\nOpenAI API Error:', str(e))
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     # For development purposes:
     # Run: python server.py
