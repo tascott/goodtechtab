@@ -12,5 +12,12 @@ Mockup a dashboard, use existing news sites as inspiration
 
 What else can go on the dashaboard? a job openings count? 
 
-layoff charts?
+layoff charts? - find here https://www.trueup.io/layoffs (use a scraper if I can't get stats, one that actually opens and views the page)
 
+Add a 'take a minute to breathe' orb indicator/instruction
+
+Add a photos widget (user chooses - what about storage?)
+
+Add quotes widget
+
+See perplexity pdf

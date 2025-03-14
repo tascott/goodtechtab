@@ -1,12 +1,42 @@
 [
-	{
-		"title": "Tech Giant Announces 500 New Jobs",
-		"description": "Great news for the local economy as Tech Giant expands.",
-		"url": "https://example.com/tech-giant-500-jobs"
-	},
-	{
-		"title": "Startup Raises $5M to Enhance AI Hiring Tools",
-		"description": "Promising move that will create new roles in data science.",
-		"url": "https://example.com/startup-raises-5m"
-	}
+    {
+        "title": "Google's Gemini AI Shows Promising Results in Latest Tests",
+        "description": "Google's latest AI model demonstrates exceptional performance across various benchmarks, particularly in reasoning and coding tasks.",
+        "url": "https://blog.google/technology/ai/gemini-ai-model"
+    },
+    {
+        "title": "Apple Vision Pro Pre-orders Begin Next Month",
+        "description": "Apple's highly anticipated mixed reality headset will be available for pre-order in January, with shipping starting in early February.",
+        "url": "https://www.apple.com/newsroom/vision-pro-launch"
+    },
+    {
+        "title": "Microsoft Introduces AI-Powered Windows Features",
+        "description": "New Windows update brings AI capabilities to everyday tasks, enhancing productivity and user experience across the operating system.",
+        "url": "https://blogs.windows.com/ai-features"
+    },
+    {
+        "title": "AWS Launches New AI Development Tools",
+        "description": "Amazon Web Services releases a suite of tools to help developers build and deploy AI applications more efficiently.",
+        "url": "https://aws.amazon.com/news/ai-tools"
+    },
+    {
+        "title": "Tesla Achieves Full Self-Driving Milestone",
+        "description": "Latest FSD beta shows significant improvements in urban navigation and complex traffic scenarios.",
+        "url": "https://www.tesla.com/blog/fsd-update"
+    }
+]
+
+        "description": "New Windows update brings AI capabilities to everyday tasks, enhancing productivity and user experience across the operating system.",
+        "url": "https://blogs.windows.com/ai-features"
+    },
+    {
+        "title": "AWS Launches New AI Development Tools",
+        "description": "Amazon Web Services releases a suite of tools to help developers build and deploy AI applications more efficiently.",
+        "url": "https://aws.amazon.com/news/ai-tools"
+    },
+    {
+        "title": "Tesla Achieves Full Self-Driving Milestone",
+        "description": "Latest FSD beta shows significant improvements in urban navigation and complex traffic scenarios.",
+        "url": "https://www.tesla.com/blog/fsd-update"
+    }
 ]
