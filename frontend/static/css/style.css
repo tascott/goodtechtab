@@ -139,7 +139,27 @@ textarea {
     margin-bottom: 1rem;
 }
 
+.button-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.button-group h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.button-group .buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 0.5rem;
@@ -153,6 +173,10 @@ textarea {
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s;
+}
+
+.sentiment-ai .btn {
+    opacity: 0.85;
 }
 
 .btn-grok { background-color: #007bff; }
@@ -215,4 +239,27 @@ textarea {
 
 .hidden {
     display: none;
+}
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.action-buttons a {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.action-buttons a:hover {
+    background-color: var(--secondary-color);
+    text-decoration: none;
 }

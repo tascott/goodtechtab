@@ -23,23 +23,6 @@ def collect_rss_content():
         try:
             feed = feedparser.parse(feed_url)
 
-            # Only log debug info for Hacker News
-            if 'news.ycombinator.com' in feed_url:
-                print(f'\nHacker News Feed Debug Info:')
-                print(f'Feed version: {feed.get("version", "unknown")}')
-                print(f'Feed encoding: {feed.get("encoding", "unknown")}')
-                print(f'Feed headers: {feed.get("headers", {})}')
-                print(f'Feed status: {feed.status if hasattr(feed, "status") else "No status"}')
-                print(f'Feed bozo: {feed.bozo if hasattr(feed, "bozo") else "No bozo flag"}')
-                if hasattr(feed, 'bozo') and feed.bozo:
-                    print(f'Bozo exception: {feed.bozo_exception}')
-                print(f'Feed keys available: {feed.keys()}')
-                print(f'Raw feed content: {str(feed.get("raw_data", ""))[:500]}...')
-                if feed.entries:
-                    print(f'Number of entries: {len(feed.entries)}')
-                    print(f'First entry keys: {feed.entries[0].keys() if feed.entries else "No entries"}')
-                    print(f'First entry content: {feed.entries[0] if feed.entries else "No entries"}')
-
             if hasattr(feed, 'status') and feed.status != 200:
                 continue
 
@@ -49,7 +32,7 @@ def collect_rss_content():
             if not feed.entries:
                 continue
 
-            for entry in feed.entries[:20]:  # Get 20 most recent entries per feed
+            for entry in feed.entries[:50]:  # Get 20 most recent entries per feed
                     # Convert published date to ISO format
                     published = entry.get('published_parsed')
                     if published:
@@ -104,8 +87,8 @@ def collect_rss_content():
                                         description = story_data.get('text', '')
                                         if not description:
                                             description = f"Points: {story_data.get('score', 0)} | Comments: {story_data.get('descendants', 0)}"
-                        except Exception as e:
-                            print(f"Error fetching HN API content: {str(e)}")
+                        except Exception:
+                            pass
 
                     # If still no description, use a placeholder
                     if not description:
@@ -118,10 +101,9 @@ def collect_rss_content():
                         'source': clean_html_text(feed.feed.get('title', '')),
                         'published': published_iso
                     })
-        except Exception as e:
-            print(f"Error fetching feed {feed_url}: {str(e)}")
+        except Exception:
             continue
 
     # Sort by publication date, newest first
     stories.sort(key=lambda x: x['published'] if x['published'] else '', reverse=True)
-    return stories[:100]  # Return top 20 stories overall
+    return stories[:100]  # Return top 100 stories

@@ -47,9 +47,23 @@ function displayNews(newsArray) {
         link.textContent = "Read more";
         link.target = "_blank";
 
+        const addButton = document.createElement("add-content-button");
+        addButton.setAttribute("content", JSON.stringify({
+            title: item.title,
+            description: item.description,
+            url: item.url,
+            source: "Reddit",
+            type: "reddit"
+        }));
+
+        const actionDiv = document.createElement("div");
+        actionDiv.classList.add("action-buttons");
+        actionDiv.appendChild(link);
+        actionDiv.appendChild(addButton);
+
         articleDiv.appendChild(title);
         articleDiv.appendChild(description);
-        articleDiv.appendChild(link);
+        articleDiv.appendChild(actionDiv);
 
         container.appendChild(articleDiv);
     });
@@ -61,10 +75,10 @@ async function askAI(model) {
 
     const responseContainer = document.getElementById('response');
     const responseText = document.getElementById('responseText');
-    
+
     responseContainer.classList.remove('hidden');
     responseText.textContent = 'Thinking...';
-    
+
     try {
         const response = await fetch(ENDPOINTS[model], {
             method: 'POST',
@@ -138,11 +152,26 @@ function displayRSSFeed(stories) {
         link.textContent = "Read more";
         link.target = "_blank";
 
+        const addButton = document.createElement("add-content-button");
+        addButton.setAttribute("content", JSON.stringify({
+            title: story.title,
+            description: story.description,
+            url: story.url,
+            source: story.source,
+            type: "rss",
+            published: story.published
+        }));
+
+        const actionDiv = document.createElement("div");
+        actionDiv.classList.add("action-buttons");
+        actionDiv.appendChild(link);
+        actionDiv.appendChild(addButton);
+
         articleDiv.appendChild(title);
         articleDiv.appendChild(source);
         articleDiv.appendChild(published);
         articleDiv.appendChild(description);
-        articleDiv.appendChild(link);
+        articleDiv.appendChild(actionDiv);
 
         container.appendChild(articleDiv);
     });

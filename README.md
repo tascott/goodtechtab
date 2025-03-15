@@ -8,13 +8,13 @@ Look in to a twitter scraper
 
 Mockup a dashboard, use existing news sites as inspiration
 
-What else can go on the dashaboard? a job openings count? 
+What else can go on the dashboard? a job openings count?
 
 layoff charts? - find here https://www.trueup.io/layoffs (use a scraper if I can't get stats, one that actually opens and views the page)
 
 See perplexity pdf
 
-RSS Job feeds - (maybe for the client extension?)
+RSS Job feeds - (maybe for the client extension?) - hackernews has no content, can use api https://github.com/HackerNews/API
 https://weworkremotely.com/remote-job-rss-feed
 
 

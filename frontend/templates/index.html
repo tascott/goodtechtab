@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Good Tech Dashboard</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/components/AddContentButton.js"></script>
 </head>
 
 <body>
@@ -15,7 +16,7 @@
 
         <main>
             <section class="widget news-widget">
-                <h2>Tech News</h2>
+                <h2>Reddit Success Stories</h2>
                 <div id="newsContainer" class="news-container">
                     <div class="loading">Loading news...</div>
                 </div>
@@ -32,11 +33,21 @@
                 <h2>AI Insights</h2>
                 <div class="input-group">
                     <textarea id="question" rows="3" placeholder="Ask about the tech news..."></textarea>
-                    <div class="button-group">
-                        <button onclick="askAI('grok')" class="btn btn-grok">Ask Grok</button>
-                        <button onclick="askAI('perplexity')" class="btn btn-perplexity">Ask Perplexity</button>
-                        <button onclick="askAI('deepseek')" class="btn btn-deepseek">Ask DeepSeek</button>
-                        <button onclick="askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
+                    <div class="button-groups">
+                        <div class="button-group primary-ai">
+                            <h3>Primary AI Services</h3>
+                            <div class="buttons">
+                                <button onclick="askAI('perplexity')" class="btn btn-perplexity">Ask Perplexity</button>
+                                <button onclick="askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
+                            </div>
+                        </div>
+                        <div class="button-group sentiment-ai">
+                            <h3>Sentiment Analysis</h3>
+                            <div class="buttons">
+                                <button onclick="askAI('grok')" class="btn btn-grok">Ask Grok</button>
+                                <button onclick="askAI('deepseek')" class="btn btn-deepseek">Ask DeepSeek</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="response" class="response-container hidden">
