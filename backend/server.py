@@ -91,7 +91,6 @@ def ask_perplexity():
                         "content": question
                     }
                 ],
-                "max_tokens": 123,
                 "temperature": 0.2,
                 "top_p": 0.9,
                 "stream": False,

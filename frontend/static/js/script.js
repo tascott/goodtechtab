@@ -177,6 +177,13 @@ function displayRSSFeed(stories) {
     });
 }
 
+function populateAndAskPerplexity() {
+    const defaultPrompt = "Find me good news in tech, particularly around hiring, jobs and layoffs, from the last 7 days\n and give me the sources. Include social media if you can with sources/links.";
+    const textarea = document.getElementById('question');
+    textarea.value = defaultPrompt;
+    textarea.focus();
+}
+
 // Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     fetchNews();

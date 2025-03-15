@@ -263,3 +263,19 @@ textarea {
     background-color: var(--secondary-color);
     text-decoration: none;
 }
+
+.default-prompt {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border: 1px dashed #e5e7eb;
+    cursor: pointer;
+}
+
+.default-prompt:hover {
+    background-color: #f3f4f6;
+    border-color: var(--primary-color);
+}
