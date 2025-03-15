@@ -24,16 +24,16 @@ CORS(app)
 def index():
     return render_template('index.html')
 
-@app.before_request
-def log_request_info():
-    if not request.path.startswith('/static/'):
-        print('\n=== Request Info ===')
-        print('Headers:', dict(request.headers))
-        print('Method:', request.method)
-        print('URL:', request.url)
-        if request.is_json:
-            print('JSON:', request.json)
-        print('==================\n')
+# @app.before_request
+# def log_request_info():
+#     if not request.path.startswith('/static/'):
+#         print('\n=== Request Info ===')
+#         print('Headers:', dict(request.headers))
+#         print('Method:', request.method)
+#         print('URL:', request.url)
+#         if request.is_json:
+#             print('JSON:', request.json)
+#         print('==================\n')
 
 #######################
 # Core Data APIs
@@ -80,21 +80,22 @@ def ask_perplexity():
                 'Authorization': f'Bearer {perplexity_key}'
             },
             json={
-                "model": "sonar",
+                "model": "sonar-deep-research",
                 "messages": [
                     {
                         "role": "system",
-                        "content": "Be precise and concise."
+                        "content": "You are a helpful AI assistant focused on providing comprehensive, well-researched information. Always cite your sources and provide detailed, structured responses."
                     },
                     {
                         "role": "user",
                         "content": question
                     }
                 ],
-                "temperature": 0.2,
-                "top_p": 0.9,
+                "temperature": 0.1,
+                "top_p": 1.0,
                 "stream": False,
-                "frequency_penalty": 1
+                "frequency_penalty": 0.0,
+                "presence_penalty": 0.0
             }
         )
         response.raise_for_status()

@@ -5,6 +5,7 @@
     <title>Good Tech Dashboard</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="/static/js/components/AddContentButton.js"></script>
+    <script src="/static/js/script.js"></script>
 </head>
 
 <body>
@@ -36,10 +37,10 @@
                     <div class="button-groups">
                         <div class="button-group primary-ai">
                             <h3>Primary AI Services</h3>
-                            <p class="default-prompt">Default prompt: "Find me good news in tech, particularly around hiring, jobs and layoffs, from the last 7 days and give me the sources. Include social media if you can with sources/links."</p>
+                            <p class="default-prompt" onclick="loadDefaultPrompt()">Default prompt: "Find me good news in tech, particularly around hiring, jobs and layoffs, from the last 10 days and give me the sources. Include social media if you can with sources/links."</p>
                             <div class="buttons">
-                                <button onclick="populateAndAskPerplexity()" class="btn btn-perplexity">Ask Perplexity</button>
-                                <button onclick="askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
+                                <button onclick="loadDefaultPrompt(); askAI('perplexity')" class="btn btn-perplexity">Ask Perplexity</button>
+                                <button onclick="loadDefaultPrompt(); askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
                             </div>
                         </div>
                         <div class="button-group sentiment-ai">
@@ -72,8 +73,5 @@
             </section>
         </main>
     </div>
-
-    <script src="/static/js/script.js"></script>
 </body>
-
 </html>
