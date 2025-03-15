@@ -9,3 +9,4 @@
 /*.pyc
 backend/__pycache__/scraper.cpython-310.pyc
 .env
+.qodo

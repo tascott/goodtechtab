@@ -1,42 +1,42 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from dotenv import load_dotenv
 import requests
 import os
-from scraper import scrape_news
-from filter import filter_positive_articles
+from .scraper import scrape_news
+from .filter import filter_positive_articles
+from .rss_handler import collect_rss_content
 from flask_cors import CORS
 import json
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__,
+    static_folder='../frontend/static',
+    template_folder='../frontend/templates'
+)
 app.debug = True
 
 # Configure CORS
-CORS(app, resources={
-    r"/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
-        "supports_credentials": False
-    }
-})
+CORS(app)
+
+# Serve the dashboard
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.before_request
 def log_request_info():
-    print('\n=== Request Info ===')  
-    print('Headers:', dict(request.headers))
-    print('Method:', request.method)
-    print('URL:', request.url)
-    if request.is_json:
-        print('JSON:', request.json)
-    print('==================\n')
+    if not request.path.startswith('/static/'):
+        print('\n=== Request Info ===')  
+        print('Headers:', dict(request.headers))
+        print('Method:', request.method)
+        print('URL:', request.url)
+        if request.is_json:
+            print('JSON:', request.json)
+        print('==================\n')
 
-@app.route("/good-tech-news", methods=["GET", "OPTIONS"])
+@app.route("/api/news", methods=["GET"])
 def get_good_tech_news():
-    if request.method == "OPTIONS":
-        return "", 200
-
     # 1. Scrape articles
     articles = scrape_news()
 
@@ -44,18 +44,18 @@ def get_good_tech_news():
     positive = filter_positive_articles(articles)
 
     # 3. Return as JSON
-    response = jsonify(positive)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    return jsonify(positive)
 
-@app.route("/ask-grok", methods=["POST", "OPTIONS"])
+@app.route("/api/rss-feed", methods=["GET"])
+def get_rss_feed():
+    try:
+        stories = collect_rss_content()
+        return jsonify(stories)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/ask-grok", methods=["POST"])
 def ask_grok():
-    if request.method == "OPTIONS":
-        response = jsonify({})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
 
     grok_key = os.getenv('GROK_KEY')
     if not grok_key:
@@ -96,14 +96,8 @@ def ask_grok():
         print('\nGrok API Error:', str(e))
         return jsonify({"error": str(e)}), 500
 
-@app.route("/ask-perplexity", methods=["POST", "OPTIONS"])
+@app.route("/api/ask-perplexity", methods=["POST"])
 def ask_perplexity():
-    if request.method == "OPTIONS":
-        response = jsonify({})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
 
     perplexity_key = os.getenv('PERPLEXITY_KEY')
     if not perplexity_key:
@@ -147,14 +141,8 @@ def ask_perplexity():
         print('\nPerplexity API Error:', str(e))
         return jsonify({"error": str(e)}), 500
 
-@app.route("/ask-deepseek", methods=["POST", "OPTIONS"])
+@app.route("/api/ask-deepseek", methods=["POST"])
 def ask_deepseek():
-    if request.method == "OPTIONS":
-        response = jsonify({})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
 
     try:
         from openai import OpenAI
@@ -193,14 +181,8 @@ def ask_deepseek():
         print('\nDeepSeek API Error:', str(e))
         return jsonify({"error": str(e)}), 500
 
-@app.route("/ask-openai", methods=["POST", "OPTIONS"])
+@app.route("/api/ask-openai", methods=["POST"])
 def ask_openai():
-    if request.method == "OPTIONS":
-        response = jsonify({})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
 
     try:
         from openai import OpenAI

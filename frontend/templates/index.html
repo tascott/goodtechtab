@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Good Tech Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Good Tech Dashboard</h1>
+            <p>Aggregating positive tech news and insights</p>
+        </header>
+
+        <main>
+            <section class="widget news-widget">
+                <h2>Tech News</h2>
+                <div id="newsContainer" class="news-container">
+                    <div class="loading">Loading news...</div>
+                </div>
+            </section>
+
+            <section class="widget rss-widget two-col">
+                <h2>Tech RSS Feed</h2>
+                <div id="rssFeedContainer" class="news-container">
+                    <div class="loading">Loading RSS feed...</div>
+                </div>
+            </section>
+
+            <section class="widget ai-widget">
+                <h2>AI Insights</h2>
+                <div class="input-group">
+                    <textarea id="question" rows="3" placeholder="Ask about the tech news..."></textarea>
+                    <div class="button-group">
+                        <button onclick="askAI('grok')" class="btn btn-grok">Ask Grok</button>
+                        <button onclick="askAI('perplexity')" class="btn btn-perplexity">Ask Perplexity</button>
+                        <button onclick="askAI('deepseek')" class="btn btn-deepseek">Ask DeepSeek</button>
+                        <button onclick="askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
+                    </div>
+                </div>
+                <div id="response" class="response-container hidden">
+                    <h3>Response:</h3>
+                    <p id="responseText"></p>
+                </div>
+            </section>
+
+            <section class="widget stats-widget">
+                <h2>Tech Industry Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Job Openings</h3>
+                        <div id="jobCount" class="stat-value">Loading...</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Recent Funding</h3>
+                        <div id="fundingAmount" class="stat-value">Loading...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>
