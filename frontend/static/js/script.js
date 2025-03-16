@@ -8,29 +8,33 @@ const ENDPOINTS = {
     openai: `${BASE_URL}/api/ask-openai`
 };
 
-const ANALYSIS_INSTRUCTIONS = `Please analyze this content. For each news item:
+const ANALYSIS_INSTRUCTIONS = `Please convert each news item into the following HTML format:
 
-1. Remove any markdown formatting (**, [], etc.)
-2. Provide a clear, concise title
-3. Include a detailed description without any special formatting
-4. Include the citation number at the end of each item
-5. Do not include any introductory text or summaries
-6. Do not include any section headers or separators
+<div class="news-item">
+    <h3>TITLE HERE</h3>
+    <p>CONTENT HERE</p>
+    <div class="source">SOURCE URL HERE</div>
+</div>
 
-Example format for each item:
-Title: The actual title here
-Content: The full description here
-Citation: [X]
+Important formatting rules:
+1. Each story must be wrapped in a div with class "news-item"
+2. Title must be in h3 tags
+3. Content must be in p tags
+4. Source URL must be in a div with class "source" (extract from the citation links/references)
+5. Remove any markdown formatting (**, [], etc.)
+6. Do not add any extra text, headers, or summaries
+7. Use exact HTML tags as shown above
 
-Please provide each story in this exact format, numbered from 1 onwards.`;
+Example:
+<div class="news-item">
+    <h3>Google Expands AI Team</h3>
+    <p>Google announces major expansion with 1000 new AI roles across US offices. Salaries range from $150,000 to $300,000.</p>
+    <div class="source">https://example.com/google-expansion</div>
+</div>
 
-const EXAMPLE_RAW_RESPONSE = `Here's a numbered list of tech hiring news stories from the past 10 days:
+Please process all stories in this exact HTML format.`;
 
-1. **Major Tech Expansion** - Google announces 1000 new AI roles across US offices. Salaries range from $150,000 to $300,000. [1]
-
-2. **Startup Growth** - AI startup DeepMind doubles its engineering team, adding 200 positions. [2]
-
-3. **Industry Shift** - Tech hiring in renewable energy sector up 45% since January. [3]`;
+const EXAMPLE_RAW_RESPONSE = ``;
 
 async function fetchNews() {
     try {
@@ -98,10 +102,8 @@ async function askAI(model) {
     if (!question) return;
 
     const responseContainer = document.getElementById('response');
-    const responseText = document.getElementById('responseText');
-
     responseContainer.classList.remove('hidden');
-    responseText.innerHTML = `
+    responseContainer.innerHTML = `
         <div class="loading-indicator">
             <p>Processing request... This may take a few minutes</p>
             <div class="loading-spinner"></div>
@@ -124,14 +126,15 @@ async function askAI(model) {
             throw new Error(data.error);
         }
 
-        if (model === 'perplexity') {
+        // Both Perplexity and OpenAI responses should show in the raw response textarea
+        if (model === 'perplexity' || model === 'openai') {
             displayRawPerplexityResponse(data);
         } else {
             displayFormattedResponse(data, model);
         }
     } catch (error) {
         console.error(`${model} Error:`, error);
-        responseText.innerHTML = `
+        responseContainer.innerHTML = `
             <div class="error-message">
                 <p>Error: ${error.message}</p>
                 <button onclick="askAI('${model}')" class="btn btn-${model}">Try Again</button>
@@ -144,10 +147,7 @@ function displayRawPerplexityResponse(data) {
     const responseContainer = document.getElementById('response');
     responseContainer.classList.remove('hidden');
 
-    // Store the citations array globally for later use
-    window.lastPerplexityCitations = data.citations || [];
-
-    // Create the response structure
+    // Just dump the raw response into the textarea
     responseContainer.innerHTML = `
         <div class="response-boxes">
             <div class="response-box">
@@ -156,7 +156,7 @@ function displayRawPerplexityResponse(data) {
             </div>
             <div class="response-box">
                 <h4>Analysis Prompt</h4>
-                <textarea id="analysisPrompt" class="response-textarea" rows="10" placeholder="Edit this prompt for analysis...">Extract all positive news stories from this content.</textarea>
+                <textarea id="analysisPrompt" class="response-textarea" rows="10" placeholder="Edit this prompt for analysis...">${ANALYSIS_INSTRUCTIONS}</textarea>
             </div>
         </div>
         <div class="response-box full-width">
@@ -200,15 +200,6 @@ async function analyzeWithAI(model) {
                 }]
             };
 
-            // Make sure we have the citations array available
-            if (!window.lastPerplexityCitations) {
-                window.lastPerplexityCitations = [];
-            }
-
-            // Extract citation numbers from the content
-            const citationMatches = normalizedResponse.match(/\[(\d+)\]/g) || [];
-            window.lastPerplexityCitations = citationMatches.map(() => '');  // Create empty citations array matching the number of citations
-
             displayFormattedResponse(data, model);
             return;
         } catch (error) {
@@ -228,6 +219,18 @@ async function analyzeWithAI(model) {
 
     // Just use what's in the textarea directly
     const combinedPrompt = `${formattingInstructions}\n\nHere is the content to analyze:\n\n${rawResponse}`;
+
+    // Show what's being sent
+    resultsContainer.innerHTML = `
+        <div class="loading-indicator">
+            <p>Analyzing with ${model}...</p>
+            <div class="loading-spinner"></div>
+        </div>
+        <div class="prompt-log" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
+            <h4>Sending to ${model}:</h4>
+            <pre style="white-space: pre-wrap; overflow-wrap: break-word;">${combinedPrompt}</pre>
+        </div>
+    `;
 
     try {
         const response = await fetch(ENDPOINTS[model], {
@@ -260,49 +263,57 @@ async function analyzeWithAI(model) {
 function displayFormattedResponse(data, model) {
     const resultsContainer = document.getElementById('analysisResults');
     const content = data.choices?.[0]?.message?.content || data.answer || '';
-    const citations = window.lastPerplexityCitations || [];
 
-    // Split content into individual stories based on Title: pattern
-    const stories = content.split(/(?=Title:)/).filter(story => story.trim());
+    // Create a temporary container to parse HTML
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = content;
 
     const itemsContainer = document.createElement('div');
     itemsContainer.classList.add('ai-items-container');
 
-    stories.forEach((story) => {
-        const titleMatch = story.match(/Title:\s*(.+?)(?=\nContent:)/s);
-        const contentMatch = story.match(/Content:\s*(.+?)(?=\nCitation:)/s);
-        const citationMatch = story.match(/Citation:\s*\[(\d+)\]/);
+    // Get all news items
+    const newsItems = tempContainer.getElementsByClassName('news-item');
 
-        if (!titleMatch || !contentMatch) return;
+    Array.from(newsItems).forEach((item) => {
+        const title = item.querySelector('h3')?.textContent || 'Untitled';
+        const content = item.querySelector('p')?.textContent || '';
+        const sourceUrl = item.querySelector('.source')?.textContent?.trim() || '';
 
-        const title = titleMatch[1].trim();
-        const content = contentMatch[1].trim();
-        const citationIndex = citationMatch ? parseInt(citationMatch[1]) - 1 : -1;
+        // Try to extract source name from URL
+        let sourceName = 'Unknown';
+        try {
+            if (sourceUrl) {
+                const url = new URL(sourceUrl);
+                sourceName = url.hostname.replace('www.', '');
+            }
+        } catch (e) {
+            console.warn('Could not parse URL for source name:', e);
+        }
+
+        const safeContent = {
+            title: title.replace(/[\\"']/g, '\\$&'),
+            description: content.replace(/[\\"']/g, '\\$&'),
+            url: sourceUrl,
+            source: sourceName,
+            type: 'ai_api_response',
+            published_at: new Date().toISOString(),
+            is_active: true,
+            metadata: {
+                model: model
+            }
+        };
 
         const itemDiv = document.createElement('div');
         itemDiv.classList.add('ai-response-item');
 
-        // Escape special characters in content for JSON
-        const safeContent = {
-            title: title.replace(/[\\"']/g, '\\$&'),
-            content: content.replace(/[\\"']/g, '\\$&'),
-            source_url: citations[citationIndex] || '',
-            source_name: model.charAt(0).toUpperCase() + model.slice(1),
-            sentiment: 'positive',
-            content_type: 'ai_generated',
-            published_at: new Date().toISOString(),
-            is_active: true,
-            metadata: {
-                citations: citations,
-                original_citation_index: citationIndex + 1
-            }
-        };
-
         itemDiv.innerHTML = `
             <h4>${safeContent.title}</h4>
-            <p>${safeContent.content}</p>
+            <p>${content}</p>
+            <div class="source-info">
+                <small>Source: ${safeContent.source}</small>
+            </div>
             <div class="action-buttons">
-                ${citations[citationIndex] ? `<a href="${citations[citationIndex]}" target="_blank" class="btn-link">Source</a>` : ''}
+                ${sourceUrl ? `<a href="${sourceUrl}" target="_blank" class="btn-link">Source</a>` : ''}
                 <add-content-button content='${JSON.stringify(safeContent).replace(/'/g, "&apos;")}'></add-content-button>
             </div>
         `;
@@ -389,13 +400,6 @@ function displayRSSFeed(stories) {
     });
 }
 
-function loadDefaultPrompt() {
-    const defaultPrompt = "Find me good news in tech, particularly around hiring, jobs and layoffs, from the last 10 days\n and give me the sources. Include social media if you can with sources/links.";
-    const textarea = document.getElementById('question');
-    textarea.value = defaultPrompt;
-    textarea.focus();
-}
-
 // Initialize everything when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     fetchNews();
@@ -425,6 +429,12 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div id="analysisResults"></div>
     `;
+
+    // Pre-populate the question textbox with the default prompt
+    const questionTextarea = document.getElementById('question');
+    if (questionTextarea) {
+        questionTextarea.value = "Perform a deep research query to gather positive tech news and social media posts from the last 10 days that focus exclusively on hiring, job growth, and successful tech initiatives. Exclude all negative stories such as layoffs or declines. For each positive news item, extract key details (company names, specific roles, dates, etc.) and list them numerically with their corresponding source citation numbers. Your response must be succinct, factual, and strictly limited to the requested information without any fluff or extraneous commentary.";
+    }
 
     // Fetch initial stats
     document.getElementById('jobCount').textContent = 'Coming soon';
