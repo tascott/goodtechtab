@@ -1,4 +1,11 @@
 const BASE_URL = "http://127.0.0.1:5002";
+const SUPABASE_URL = 'https://dlkcexaezderjwgxgyyo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsa2NleGFlemRlcmp3Z3hneXlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMzcyODUsImV4cCI6MjA1NzcxMzI4NX0._auuX1zr2SDvpChyhyWnlX3b9C9n0XJRN1POBFSM3EM';
+
+// Initialize the Supabase client
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const ENDPOINTS = {
     news: `${BASE_URL}/api/news`,
     rssFeed: `${BASE_URL}/api/rss-feed`,
@@ -396,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pre-populate the question textbox with the default prompt
     const questionTextarea = document.getElementById('question');
     if (questionTextarea) {
-        questionTextarea.value = "Perform a deep research query to gather positive tech news and social media posts from the last 10 days that focus exclusively on hiring, job growth, and successful tech initiatives. Exclude all negative stories such as layoffs or declines. For each positive news item, extract key details (company names, specific roles, dates, etc.) and list them numerically with their corresponding source citation numbers. Your response must be succinct, factual, and strictly limited to the requested information without any fluff or extraneous commentary.";
+        questionTextarea.value = "Search the web to gather positive tech news articles (and secondarily, social media posts) from the last 3 months that focus exclusively on hiring, job growth, and good news in the tech industry. Exclude all negative stories such as layoffs or declines. For each positive news item, extract key details (company names, specific roles, dates, etc.) and list them numerically with their corresponding source citation numbers. Your response must be succinct, factual, and strictly limited to the requested information without any fluff or extraneous commentary. The end result should be a list of positive news items and their urls";
     }
 
     // Fetch initial stats

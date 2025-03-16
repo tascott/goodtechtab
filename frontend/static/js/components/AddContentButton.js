@@ -97,9 +97,50 @@ class AddContentButton extends HTMLElement {
 
     setupEventListeners() {
         const addButton = this.shadowRoot.querySelector('.add-button');
-        addButton.addEventListener('click', () => {
+        addButton.addEventListener('click', async () => {
             console.log('Add to database clicked:', this.content);
-            // Database implementation will go here later
+
+            try {
+                addButton.disabled = true;
+                addButton.textContent = 'Adding...';
+
+                const { data, error } = await window.supabaseClient
+                    .from('curated_content')
+                    .insert([{
+                        title: this.content.title,
+                        content: this.content.description,
+                        source_url: this.content.url,
+                        source_name: this.content.source,
+                        content_type: this.content.type,
+                        published_at: this.content.published || new Date().toISOString(),
+                        is_active: true,
+                        metadata: this.content.metadata || {}
+                    }]);
+
+                if (error) throw error;
+
+                addButton.textContent = 'Added!';
+                addButton.style.backgroundColor = 'var(--success-color)';
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    addButton.disabled = false;
+                    addButton.textContent = 'Add to Database';
+                    addButton.style.backgroundColor = '';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error adding content:', error);
+                addButton.textContent = 'Error!';
+                addButton.style.backgroundColor = 'var(--warning-color)';
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    addButton.disabled = false;
+                    addButton.textContent = 'Add to Database';
+                    addButton.style.backgroundColor = '';
+                }, 2000);
+            }
         });
     }
 }
