@@ -172,8 +172,9 @@ function displayRawPerplexityResponse(data) {
 }
 
 async function analyzeWithAI(model) {
-    const aiResponse = document.getElementById('aiResponse').value.trim();
     const resultsContainer = document.getElementById('analysisResults');
+    const rawResponse = document.getElementById('rawResponse').value;
+    const formattingInstructions = document.getElementById('analysisPrompt').value;
 
     // Show loading indicator
     resultsContainer.innerHTML = `
@@ -182,40 +183,6 @@ async function analyzeWithAI(model) {
             <div class="loading-spinner"></div>
         </div>
     `;
-
-    // If aiResponse is populated, use that directly
-    if (aiResponse) {
-        try {
-            // Replace literal \n with actual newlines and normalize
-            const normalizedResponse = aiResponse
-                .replace(/\\n/g, '\n')  // Replace \n with actual newlines
-                .replace(/\n{3,}/g, '\n\n')  // Replace multiple newlines with double newlines
-                .trim();
-
-            const data = {
-                choices: [{
-                    message: {
-                        content: normalizedResponse
-                    }
-                }]
-            };
-
-            displayFormattedResponse(data, model);
-            return;
-        } catch (error) {
-            console.error('Error processing AI response:', error);
-            resultsContainer.innerHTML = `
-                <div class="error-message">
-                    <p>Error processing AI response: ${error.message}</p>
-                    <button onclick="analyzeWithAI('${model}')" class="btn btn-${model}">Try Again</button>
-                </div>
-            `;
-            return;
-        }
-    }
-
-    const rawResponse = document.getElementById('rawResponse').value;
-    const formattingInstructions = document.getElementById('analysisPrompt').value;
 
     // Just use what's in the textarea directly
     const combinedPrompt = `${formattingInstructions}\n\nHere is the content to analyze:\n\n${rawResponse}`;
@@ -418,10 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h4>Analysis Prompt</h4>
                 <textarea id="analysisPrompt" class="response-textarea" rows="10" placeholder="Edit this analysis prompt as needed...">${ANALYSIS_INSTRUCTIONS}</textarea>
             </div>
-        </div>
-        <div class="response-box full-width">
-            <h4>AI Analysis Response (Optional)</h4>
-            <textarea id="aiResponse" class="response-textarea" rows="10" placeholder="If you have a Deepseek/Grok response to render, paste it here. Otherwise, leave empty to generate new analysis."></textarea>
         </div>
         <div class="button-row">
             <button onclick="analyzeWithAI('grok')" class="btn btn-grok">Analyze with Grok</button>

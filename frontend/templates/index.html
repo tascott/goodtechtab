@@ -42,18 +42,31 @@
                                 <button onclick="askAI('openai')" class="btn btn-openai">Ask OpenAI</button>
                             </div>
                         </div>
-                        <div class="button-group sentiment-ai">
+                        <!-- <div class="button-group sentiment-ai">
                             <h3>Sentiment Analysis</h3>
                             <div class="buttons">
                                 <button onclick="askAI('grok')" class="btn btn-grok">Ask Grok</button>
                                 <button onclick="askAI('deepseek')" class="btn btn-deepseek">Ask DeepSeek</button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div id="response" class="response-container hidden">
-                    <h3>Response:</h3>
-                    <p id="responseText"></p>
+                    <div class="response-boxes">
+                        <div class="response-box">
+                            <h4>Raw Response</h4>
+                            <textarea id="rawResponse" class="response-textarea" rows="10" placeholder="Paste your raw response here or wait for Perplexity response...">${EXAMPLE_RAW_RESPONSE}</textarea>
+                        </div>
+                        <div class="response-box">
+                            <h4>Analysis Prompt</h4>
+                            <textarea id="analysisPrompt" class="response-textarea" rows="10" placeholder="Edit this analysis prompt as needed...">${ANALYSIS_INSTRUCTIONS}</textarea>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <button onclick="analyzeWithAI('grok')" class="btn btn-grok">Analyze with Grok</button>
+                        <button onclick="analyzeWithAI('deepseek')" class="btn btn-deepseek">Analyze with DeepSeek</button>
+                    </div>
+                    <div id="analysisResults"></div>
                 </div>
             </section>
 

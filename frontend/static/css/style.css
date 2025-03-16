@@ -309,13 +309,6 @@ textarea {
     display: none;
 }
 
-.action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
 .action-buttons a {
     display: inline-block;
     padding: 5px 10px;
